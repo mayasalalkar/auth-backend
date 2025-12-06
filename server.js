@@ -27,7 +27,7 @@ app.use('/api/', limiter);
 
 // CORS configuration
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: ['http://localhost:3000', 'https://auth-frontend-41mn.onrender.com', process.env.FRONTEND_URL],
     credentials: true
 }));
 
