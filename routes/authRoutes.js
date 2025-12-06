@@ -5,7 +5,9 @@ const {
     verifyOTP,
     resendOTP,
     login,
-    getMe
+    getMe,
+    updateDetails,
+    updatePassword
 } = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -26,5 +28,7 @@ router.post('/login', login);
 
 // Protected routes
 router.get('/me', protect, getMe);
+router.put('/updatedetails', protect, updateDetails);
+router.put('/updatepassword', protect, updatePassword);
 
 module.exports = router;

@@ -282,3 +282,79 @@ exports.getMe = async (req, res) => {
         });
     }
 };
+
+// @desc    Update user details
+// @route   PUT /api/auth/updatedetails
+// @access  Private
+exports.updateDetails = async (req, res) => {
+    try {
+        const { name, email } = req.body;
+
+        // Create update object
+        const fieldsToUpdate = {
+            name,
+            email
+        };
+
+        const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
+            new: true,
+            runValidators: true
+        });
+
+        res.status(200).json({
+            status: 'success',
+            data: {
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    createdAt: user.createdAt
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Update Details Error:', error);
+        res.status(500).json({
+            status: 'error',
+            message: 'Server error. Please try again later.'
+        });
+    }
+};
+
+// @desc    Update password
+// @route   PUT /api/auth/updatepassword
+// @access  Private
+exports.updatePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+
+        // Get user from database with password
+        const user = await User.findById(req.user.id).select('+password');
+
+        // Check current password
+        if (!(await user.comparePassword(currentPassword))) {
+            return res.status(401).json({
+                status: 'error',
+                message: 'Incorrect current password'
+            });
+        }
+
+        user.password = newPassword;
+        await user.save();
+
+        // Send new token
+        const token = generateToken(user._id);
+
+        res.status(200).json({
+            status: 'success',
+            token,
+            message: 'Password updated successfully'
+        });
+    } catch (error) {
+        console.error('Update Password Error:', error);
+        res.status(500).json({
+            status: 'error',
+            message: 'Server error. Please try again later.'
+        });
+    }
+};

@@ -48,6 +48,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 
 // Health check route
 app.get('/api/health', (req, res) => {
